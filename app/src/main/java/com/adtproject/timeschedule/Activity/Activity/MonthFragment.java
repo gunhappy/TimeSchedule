@@ -5,15 +5,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
 
 import com.adtproject.timeschedule.Activity.Models.CalendarName;
 import com.adtproject.timeschedule.Activity.R;
+import com.marcohc.robotocalendar.RobotoCalendarView;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,7 +27,7 @@ import java.util.Calendar;
  * Use the {@link MonthFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MonthFragment extends Fragment {
+public class MonthFragment extends Fragment implements RobotoCalendarView.RobotoCalendarListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -32,7 +36,14 @@ public class MonthFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private CalendarView calendarView;
+    //private RobotoCalendarView calendarView;
+    private RobotoCalendarView robotoCalendarView;
+    private int currentMonthIndex;
+    private Calendar currentCalendar;
+    private CalendarName parseToName;
+    private String month;
+    private int month_num;
+    private int year_num;
 
 
     private OnFragmentInteractionListener mListener;
@@ -69,47 +80,21 @@ public class MonthFragment extends Fragment {
     }
 
     private void initComponents(){
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year, month, dayOfMonth);
-                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                Fragment day = new DayFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("year",year+"");
-                bundle.putString("month",month+"");
-                bundle.putString("day",dayOfMonth+"");
-                bundle.putString("week",dayOfWeek+"");
-                day.setArguments(bundle);
-
-                MainActivity.day = dayOfMonth+"";
-                MainActivity.dayofweek = dayOfWeek+"";
-                MainActivity.month = month+"";
-                MainActivity.year = year+"";
-
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame,day).commit();
-            }
-        });
-
-        CalendarName parseToName = new CalendarName();
-        String month = parseToName.getMonthName(Integer.parseInt(MainActivity.month));
-        MainActivity.toolbar.setTitle(month+" "+MainActivity.year);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, Integer.parseInt(MainActivity.year));
-        calendar.set(Calendar.MONTH, Integer.parseInt(MainActivity.month));
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(MainActivity.day));
-        long milliTime = calendar.getTimeInMillis();
-
-        calendarView.setDate(milliTime,true,true);
+        parseToName = new CalendarName();
+        month_num = Integer.parseInt(MainActivity.month);
+        month = parseToName.getMonthName(month_num);
+        year_num = Integer.parseInt(MainActivity.year);
+        MainActivity.toolbar.setTitle(month+" "+year_num);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        calendarView = (CalendarView)view.findViewById(R.id.calendarView);
+        robotoCalendarView = (RobotoCalendarView )view.findViewById(R.id.calendarView);
+        robotoCalendarView.setRobotoCalendarListener(this);
+        currentMonthIndex = 0;
+        currentCalendar = Calendar.getInstance(Locale.getDefault());
+        robotoCalendarView.markDayAsCurrentDay(currentCalendar.getTime());
         initComponents();
     }
 
@@ -144,6 +129,76 @@ public class MonthFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onDateSelected(Date date) {
+        // Mark calendar day
+        robotoCalendarView.markDayAsSelectedDay(date);
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(date.getTime());
+                int years = calendar.get(Calendar.YEAR);
+                int months = calendar.get(Calendar.MONTH);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                 Log.i("test","y: "+years+"m: "+months+" day:"+dayOfMonth);
+                calendar.set(years, months, dayOfMonth);
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                Fragment day = new DayFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("year",years+"");
+                bundle.putString("month",months+"");
+                bundle.putString("day",dayOfMonth+"");
+                bundle.putString("week",dayOfWeek+"");
+                day.setArguments(bundle);
+
+                MainActivity.day = dayOfMonth+"";
+                MainActivity.dayofweek = dayOfWeek+"";
+                MainActivity.month = months+"";
+                MainActivity.year = years+"";
+
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_frame,day).commit();
+
+
+        // Mark that day with random colors
+//        final Random random = new Random(System.currentTimeMillis());
+//        final int style = random.nextInt(3);
+//        switch (style) {
+//            case 0:
+//                robotoCalendarView.markFirstUnderlineWithStyle(RobotoCalendarView.BLUE_COLOR, date);
+//                break;
+//            case 1:
+//                robotoCalendarView.markSecondUnderlineWithStyle(RobotoCalendarView.GREEN_COLOR, date);
+//                break;
+//            case 2:
+//                robotoCalendarView.markFirstUnderlineWithStyle(RobotoCalendarView.RED_COLOR, date);
+//                break;
+//            default:
+//                break;
+//        }
+    }
+
+    @Override
+    public void onRightButtonClick() {
+        currentMonthIndex++;
+        month_num++;
+        if(month_num>11){
+            month_num = 0;
+            year_num++;
+        }
+        updateCalendar();
+    }
+
+    @Override
+    public void onLeftButtonClick() {
+        currentMonthIndex--;
+        month_num--;
+        if(month_num<0){
+            month_num = 11;
+            year_num--;
+        }
+        updateCalendar();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -157,5 +212,13 @@ public class MonthFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void updateCalendar() {
+        currentCalendar = Calendar.getInstance(Locale.getDefault());
+        currentCalendar.add(Calendar.MONTH, currentMonthIndex);
+        robotoCalendarView.initializeCalendar(currentCalendar);
+        month = parseToName.getMonthName(month_num);
+        MainActivity.toolbar.setTitle(month+" "+year_num);
     }
 }

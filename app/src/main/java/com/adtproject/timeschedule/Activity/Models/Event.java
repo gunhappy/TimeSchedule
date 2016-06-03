@@ -8,11 +8,11 @@ import java.util.Calendar;
  */
 public class Event {
     private Calendar calendar;
-    private Time startTime;
+    private Time startTime,endTime;
     private int duration;
     private String title;
 
-    public Event(Calendar calendar, Time startTime, int duration, String title) {
+    public Event(Calendar calendar, Time startTime, Time endTime, String title) {
         this.calendar = calendar;
         this.startTime = startTime;
         this.duration = duration;
