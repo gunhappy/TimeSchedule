@@ -1,12 +1,10 @@
-package com.adtproject.timeschedule.Activity.Adapter;
+package com.adtproject.timeschedule.Activity.Views;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.adtproject.timeschedule.Activity.R;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 
 /**
  * Created by พศิน on 4/6/2559.

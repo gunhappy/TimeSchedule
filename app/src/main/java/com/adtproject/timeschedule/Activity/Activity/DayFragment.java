@@ -4,23 +4,22 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.design.widget.NavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.adtproject.timeschedule.Activity.Adapter.EventAdapter;
+import com.adtproject.timeschedule.Activity.Views.EventAdapter;
 import com.adtproject.timeschedule.Activity.Models.CalendarName;
-import com.adtproject.timeschedule.Activity.Models.Daily;
+import com.adtproject.timeschedule.Activity.Models.Event;
 import com.adtproject.timeschedule.Activity.Models.Storage;
 import com.adtproject.timeschedule.Activity.R;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +46,8 @@ public class DayFragment extends Fragment {
     private TextView title;
     private Calendar calendar;
     private RecyclerView recyclerView;
+    private List<Event> eventList;
+    private EventAdapter eventAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,15 +55,6 @@ public class DayFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DayFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static DayFragment newInstance(String param1, String param2) {
         DayFragment fragment = new DayFragment();
         Bundle args = new Bundle();
@@ -99,10 +91,10 @@ public class DayFragment extends Fragment {
         day_num = Integer.parseInt(day);
         calendar = Calendar.getInstance();
         calendar.set(year_num,month_num,day_num);
-        Daily daily = Storage.getInstance().getDaily(calendar);
-
+        eventList = new ArrayList<Event>();
         recyclerView = (RecyclerView) view.findViewById(R.id.event_recycler_view);
-        EventAdapter eventAdapter = new EventAdapter(daily.getEvents());
+        eventAdapter = new EventAdapter(eventList,calendar);
+        loadEvent();
         recyclerView.setAdapter(eventAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -139,6 +131,14 @@ public class DayFragment extends Fragment {
         }
     }
 
+    public void loadEvent(){
+        eventList.clear();
+        for(Event event: Storage.getInstance().getDaily(calendar).getEvents()){
+            eventList.add(event);
+        }
+        eventAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -159,4 +159,11 @@ public class DayFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadEvent();
+    }
+
 }

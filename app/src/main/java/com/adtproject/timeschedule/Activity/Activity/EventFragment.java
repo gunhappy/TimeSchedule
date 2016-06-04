@@ -1,5 +1,6 @@
 package com.adtproject.timeschedule.Activity.Activity;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,9 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.adtproject.timeschedule.Activity.Adapter.OverviewAdapter;
+import com.adtproject.timeschedule.Activity.Views.OverviewAdapter;
+import com.adtproject.timeschedule.Activity.Models.Daily;
 import com.adtproject.timeschedule.Activity.Models.Storage;
 import com.adtproject.timeschedule.Activity.R;
+import com.marshalchen.ultimaterecyclerview.RecyclerItemClickListener;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +39,9 @@ public class EventFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private RecyclerView recyclerView;
+    private OverviewAdapter overviewAdapter;
+    private List<Daily> dailyList;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -76,14 +86,43 @@ public class EventFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        dailyList = new ArrayList<Daily>();
         recyclerView = (RecyclerView)view.findViewById(R.id.overview_recycler_view);
-        OverviewAdapter overviewAdapter = new OverviewAdapter(Storage.getInstance().getDailyList());
+        overviewAdapter = new OverviewAdapter(dailyList);
+        loadDailyList();
         recyclerView.setAdapter(overviewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(view.getContext(), new RecyclerItemClickListener.OnItemClickListener(){
+            @Override
+            public void onItemClick(View view, int position) {
+                Daily daily = Storage.getInstance().getDailyList().get(position);
+                Calendar c = daily.getCalendar();
+                int years = c.get(Calendar.YEAR);
+                int months = c.get(Calendar.MONTH);
+                int dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
+                int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+                Fragment day = new DayFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("year",years+"");
+                bundle.putString("month",months+"");
+                bundle.putString("day",dayOfMonth+"");
+                bundle.putString("week",dayOfWeek+"");
+                day.setArguments(bundle);
 
+                MainActivity.day = dayOfMonth+"";
+                MainActivity.dayofweek = dayOfWeek+"";
+                MainActivity.month = months+"";
+                MainActivity.year = years+"";
+
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_frame,day).commit();
+            }
+        }));
 
         initComponents();
     }
+
+
 
     private void initComponents(){
         MainActivity.toolbar.setTitle("Event");
@@ -127,4 +166,19 @@ public class EventFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public void loadDailyList(){
+        dailyList.clear();
+        for(Daily daily: Storage.getInstance().getDailyList()){
+            dailyList.add(daily);
+        }
+        overviewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadDailyList();
+    }
+
 }

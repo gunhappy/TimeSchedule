@@ -1,4 +1,4 @@
-package com.adtproject.timeschedule.Activity.Adapter;
+package com.adtproject.timeschedule.Activity.Views;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

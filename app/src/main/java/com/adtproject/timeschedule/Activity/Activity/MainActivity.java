@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity
     protected static String dayofweek;
     protected static String month;
     protected static String year;
+    public static DayFragment dailyFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView)findViewById(R.id.nav_view);
 
         Fragment dayFragment = new DayFragment();
+        dailyFragment = (DayFragment)dayFragment;
         this.putBundle(dayFragment);
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame,dayFragment).commit();
