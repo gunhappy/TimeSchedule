@@ -5,13 +5,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.NavigationView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.adtproject.timeschedule.Activity.Adapter.EventAdapter;
 import com.adtproject.timeschedule.Activity.Models.CalendarName;
+import com.adtproject.timeschedule.Activity.Models.Daily;
+import com.adtproject.timeschedule.Activity.Models.Storage;
 import com.adtproject.timeschedule.Activity.R;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
+
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +43,10 @@ public class DayFragment extends Fragment {
     private String dayofweek;
     private String month;
     private String year;
+    private int day_num,month_num,year_num;
     private TextView title;
+    private Calendar calendar;
+    private RecyclerView recyclerView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -76,12 +88,31 @@ public class DayFragment extends Fragment {
         MainActivity.toolbar.setTitle(month+" "+year);
         title.setText(day+" "+dayofweek);
         MainActivity.navigationView.getMenu().getItem(0).setChecked(true);
+
+
+
+        Log.e("test",Storage.getInstance().getDailyList().size()+"");
+        for (Daily d : Storage.getInstance().getDailyList()){
+            Log.e("daily",d.toString());
+        }
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         title = (TextView)view.findViewById(R.id.fragment_day_title);
+        year_num = Integer.parseInt(year);
+        month_num = Integer.parseInt(month);
+        day_num = Integer.parseInt(day);
+        calendar = Calendar.getInstance();
+        calendar.set(year_num,month_num,day_num);
+        Daily daily = Storage.getInstance().getDaily(calendar);
+        Log.e("check",daily.getEvents().size()+"");
+        recyclerView = (RecyclerView) view.findViewById(R.id.event_recycler_view);
+        EventAdapter eventAdapter = new EventAdapter(daily.getEvents());
+        recyclerView.setAdapter(eventAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         initComponents();
     }
 

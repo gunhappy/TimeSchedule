@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
         day = today.monthDay+"";
-        dayofweek = today.weekDay+"";
+        dayofweek = today.WEEK_DAY+"";
         month = today.month+"";
         year = today.year+"";
 
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity
         bundle.putString("month",month);
         bundle.putString("year",year);
         bundle.putString("week",dayofweek);
+        Log.i("week",dayofweek);
         objFragment.setArguments(bundle);
     }
     @SuppressWarnings("StatementWithEmptyBody")

@@ -78,13 +78,13 @@
         android:text="current time"
         android:id="@+id/selectTimeBtn"
         android:layout_alignTop="@+id/textView4"
-        android:layout_toStartOf="@+id/save_fab" />
+        android:layout_toEndOf="@+id/textView5" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Finish"
+        android:text="Duration"
         android:textSize="20dp"
         android:id="@+id/textView5"
         android:layout_below="@+id/selectTimeBtn"
@@ -113,7 +113,7 @@
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/durationHr_spinner"
+        android:id="@+id/duration_spinner"
         android:prompt="@string/durationHr_prompt"
         android:entries="@array/durationHr_arrays"
         android:layout_alignTop="@+id/textView5"

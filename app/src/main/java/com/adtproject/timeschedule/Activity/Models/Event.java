@@ -8,14 +8,15 @@ import java.util.Calendar;
  */
 public class Event {
     private Calendar calendar;
-    private Time startTime,endTime;
-    private int duration;
+    private int duration,hour,minute,endHour;
     private String title;
 
-    public Event(Calendar calendar, Time startTime, Time endTime, String title) {
+    public Event(Calendar calendar, int hour,int minute, int duration, String title) {
         this.calendar = calendar;
-        this.startTime = startTime;
+        this.hour = hour;
+        this.minute = minute;
         this.duration = duration;
+        this.endHour = hour+duration;
         this.title = title;
     }
 
@@ -23,8 +24,12 @@ public class Event {
         return calendar;
     }
 
-    public Time getStartTime() {
-        return startTime;
+    public int getHour() {
+        return hour;
+    }
+
+    public int getMinute() {
+        return minute;
     }
 
     public int getDuration() {
@@ -33,5 +38,15 @@ public class Event {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getTimeRangeText(){
+        String hr = hour+"";
+        String min = minute+"";
+        String hrEnd = endHour+"";
+        if(hour<10) hr = "0"+hour;
+        if(endHour<10) hrEnd = "0"+endHour;
+        if(minute<10) min = "0"+minute;
+        return String.format("%s.%s - %s.%s",hr,min,hrEnd,min);
     }
 }

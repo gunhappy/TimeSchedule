@@ -5,15 +5,20 @@ import android.app.TimePickerDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.adtproject.timeschedule.Activity.Models.CalendarName;
+import com.adtproject.timeschedule.Activity.Models.Daily;
 import com.adtproject.timeschedule.Activity.Models.Event;
+import com.adtproject.timeschedule.Activity.Models.Storage;
 import com.adtproject.timeschedule.Activity.R;
 
 import java.text.SimpleDateFormat;
@@ -27,8 +32,10 @@ public class CreateEventActivity extends AppCompatActivity {
     private Calendar calendar;
     private int day=0,month=0,year=0;
     private int hour=0,minute=0;
+    private String duration="";
     private String title;
     private EditText editText;
+    private Spinner durationSpinner;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -50,6 +57,12 @@ public class CreateEventActivity extends AppCompatActivity {
                 calendar.set(year,month,day);
                 title = editText.getText().toString();
                 //Event event = new Event();
+                duration = durationSpinner.getSelectedItem().toString();
+                Log.i("duration",duration);
+                Log.i("title",title);
+                int duration_val = Integer.parseInt(duration.charAt(0)+"");
+                Event event = new Event(calendar,hour,minute,duration_val,title);
+                Storage.getInstance().addEvent(event);
                 finish();
             }
         });
@@ -67,6 +80,12 @@ public class CreateEventActivity extends AppCompatActivity {
 
             }
         });
+        Time today = new Time(Time.getCurrentTimezone());
+        today.setToNow();
+        day = today.monthDay;
+        month = today.month;
+        year = today.year;
+        setDateText();
 
         selectTimeBtn = (Button)findViewById(R.id.selectTimeBtn);
         selectTimeBtn.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +94,26 @@ public class CreateEventActivity extends AppCompatActivity {
                 TimeDialog();
             }
         });
+        hour = today.hour;
+        minute = today.minute;
+        setTimeText();
 
+        durationSpinner = (Spinner)findViewById(R.id.duration_spinner);
+
+    }
+
+    public void setDateText(){
+        CalendarName cdn = new CalendarName();
+        String month_name = cdn.getMonthName(month);
+        selectDateBtn.setText(day+" "+month_name+" "+year);
+    }
+
+    public void setTimeText(){
+        String hr = hour+"";
+        String min = minute+"";
+        if(hour<10) hr = "0"+hour;
+        if(minute<10) min = "0"+minute;
+        selectTimeBtn.setText(hr+" : "+min);
     }
 
     private void TimeDialog() {
@@ -84,6 +122,7 @@ public class CreateEventActivity extends AppCompatActivity {
             public void onTimeSet(TimePicker view, int hourOfDay, int minutes) {
                 hour = hourOfDay;
                 minute = minutes;
+                setTimeText();
             }
         };
         TimePickerDialog tpDialog = new TimePickerDialog(this,listener,hour,minute,true);
@@ -102,7 +141,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 day = dayOfMonth;
                 month = monthOfYear;
                 year = years;
-
+                setDateText();
             }};
 
         DatePickerDialog dpDialog=new DatePickerDialog(this, listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
