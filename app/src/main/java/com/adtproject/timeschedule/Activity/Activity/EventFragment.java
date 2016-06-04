@@ -4,10 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.adtproject.timeschedule.Activity.Adapter.OverviewAdapter;
+import com.adtproject.timeschedule.Activity.Models.Storage;
 import com.adtproject.timeschedule.Activity.R;
 
 /**
@@ -27,6 +31,7 @@ public class EventFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private RecyclerView recyclerView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -71,6 +76,12 @@ public class EventFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        recyclerView = (RecyclerView)view.findViewById(R.id.overview_recycler_view);
+        OverviewAdapter overviewAdapter = new OverviewAdapter(Storage.getInstance().getDailyList());
+        recyclerView.setAdapter(overviewAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
         initComponents();
     }
 

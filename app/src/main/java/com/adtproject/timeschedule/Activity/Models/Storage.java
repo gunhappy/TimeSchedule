@@ -60,4 +60,12 @@ public class Storage {
                 && c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)) return true;
         return false;
     }
+
+    public int getTotalEventNum(){
+        int total = 0;
+        for(Daily daily : dailyList){
+            total += daily.getEvents().size();
+        }
+        return total;
+    }
 }

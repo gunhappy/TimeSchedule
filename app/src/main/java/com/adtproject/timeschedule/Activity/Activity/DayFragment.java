@@ -88,13 +88,6 @@ public class DayFragment extends Fragment {
         MainActivity.toolbar.setTitle(month+" "+year);
         title.setText(day+" "+dayofweek);
         MainActivity.navigationView.getMenu().getItem(0).setChecked(true);
-
-
-
-        Log.e("test",Storage.getInstance().getDailyList().size()+"");
-        for (Daily d : Storage.getInstance().getDailyList()){
-            Log.e("daily",d.toString());
-        }
     }
 
     @Override
@@ -107,7 +100,7 @@ public class DayFragment extends Fragment {
         calendar = Calendar.getInstance();
         calendar.set(year_num,month_num,day_num);
         Daily daily = Storage.getInstance().getDaily(calendar);
-        Log.e("check",daily.getEvents().size()+"");
+
         recyclerView = (RecyclerView) view.findViewById(R.id.event_recycler_view);
         EventAdapter eventAdapter = new EventAdapter(daily.getEvents());
         recyclerView.setAdapter(eventAdapter);
