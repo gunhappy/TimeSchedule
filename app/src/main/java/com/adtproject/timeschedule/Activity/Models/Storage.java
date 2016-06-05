@@ -2,6 +2,8 @@ package com.adtproject.timeschedule.Activity.Models;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -42,6 +44,12 @@ public class Storage {
             Daily daily = new Daily(event.getCalendar());
             daily.addEvent(event);
             dailyList.add(daily);
+            Collections.sort(dailyList, new Comparator<Daily>() {
+                @Override
+                public int compare(Daily lhs, Daily rhs) {
+                    return lhs.compareTo(rhs);
+                }
+            });
         }
     }
 
@@ -52,6 +60,14 @@ public class Storage {
             }
         }
         return new Daily(calendar);
+    }
+
+    public void removeDailyFromCalendar (Calendar calendar){
+        for(int i=0;i<dailyList.size();i++){
+            if(isSameDate(dailyList.get(i).getCalendar(),(calendar))){
+                dailyList.remove(i);
+            }
+        }
     }
 
     public boolean isSameDate(Calendar c1,Calendar c2){
@@ -67,5 +83,22 @@ public class Storage {
             total += daily.getEvents().size();
         }
         return total;
+    }
+
+    public void removeEvent(Calendar calendar,int position){
+        getDaily(calendar).getEvents().remove(position);
+        if(getDaily(calendar).getEvents().size()==0)removeDailyFromCalendar(calendar);
+    }
+
+    public boolean canCreateEvent(Event event){
+        Calendar c = event.getCalendar();
+        Daily d = getDaily(c);
+        for(Event e : d.getEvents()){
+            if(event.getStartTime()>=e.getStartTime() && event.getStartTime() <= e.getEndTime()
+                    || event.getEndTime() >= e.getStartTime()){
+                return false;
+            }
+        }
+        return true;
     }
 }

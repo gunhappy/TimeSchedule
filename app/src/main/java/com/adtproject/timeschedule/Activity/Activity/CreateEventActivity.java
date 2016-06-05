@@ -1,11 +1,14 @@
 package com.adtproject.timeschedule.Activity.Activity;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -68,8 +71,13 @@ public class CreateEventActivity extends AppCompatActivity {
                 duration = durationSpinner.getSelectedItem().toString();
                 int duration_val = Integer.parseInt(duration.charAt(0)+"");
                 Event event = new Event(calendar,hour,minute,duration_val,title);
-                Storage.getInstance().addEvent(event);
-                finish();
+                if(Storage.getInstance().canCreateEvent(event)){
+                    Storage.getInstance().addEvent(event);
+                    finish();
+                }
+                else{
+                    showAlertDialog("Can not create event.\nThis time is exist.");
+                }
             }
         });
         this.setTitle("Create New Event");
@@ -110,6 +118,19 @@ public class CreateEventActivity extends AppCompatActivity {
         CalendarName cdn = new CalendarName();
         String month_name = cdn.getMonthName(month);
         selectDateBtn.setText(cdn.getDayName(dayofweek)+" "+day+" "+month_name+" "+year);
+    }
+
+    public void showAlertDialog(String message){
+        AlertDialog alertDialog = new AlertDialog.Builder(CreateEventActivity.this).create();
+        alertDialog.setTitle("Alert");
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 
     public void setTimeText(){

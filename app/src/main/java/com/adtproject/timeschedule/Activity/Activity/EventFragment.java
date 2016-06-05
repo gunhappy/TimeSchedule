@@ -19,6 +19,8 @@ import com.marshalchen.ultimaterecyclerview.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -102,6 +104,7 @@ public class EventFragment extends Fragment {
                 int dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
                 int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
                 Fragment day = new DayFragment();
+                MainActivity.dailyFragment = (DayFragment)day;
                 Bundle bundle = new Bundle();
                 bundle.putString("year",years+"");
                 bundle.putString("month",months+"");
@@ -152,16 +155,6 @@ public class EventFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -172,6 +165,12 @@ public class EventFragment extends Fragment {
         for(Daily daily: Storage.getInstance().getDailyList()){
             dailyList.add(daily);
         }
+        Collections.sort(dailyList, new Comparator<Daily>() {
+            @Override
+            public int compare(Daily lhs, Daily rhs) {
+                return lhs.compareTo(rhs);
+            }
+        });
         overviewAdapter.notifyDataSetChanged();
     }
 

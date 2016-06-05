@@ -42,6 +42,17 @@
             android:layout_below="@+id/textView6"
             android:layout_alignParentStart="true" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Long press to delete"
+            android:id="@+id/textView"
+            android:layout_marginEnd="22dp"
+            android:layout_above="@+id/event_recycler_view"
+            android:layout_alignParentEnd="true"
+            android:textColor="#f1e820"
+            android:textStyle="bold" />
 
 
     </RelativeLayout>

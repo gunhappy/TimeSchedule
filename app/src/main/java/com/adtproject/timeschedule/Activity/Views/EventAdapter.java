@@ -56,7 +56,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
                         {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Storage.getInstance().getDaily(calendar).getEvents().remove(position);
+                                Storage.getInstance().removeEvent(calendar,position);
                                 MainActivity.dailyFragment.loadEvent();
                             }
 

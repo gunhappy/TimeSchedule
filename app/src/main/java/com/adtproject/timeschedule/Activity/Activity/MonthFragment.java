@@ -143,6 +143,7 @@ public class MonthFragment extends Fragment implements RobotoCalendarView.Roboto
                 calendar.set(years, months, dayOfMonth);
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                 Fragment day = new DayFragment();
+                MainActivity.dailyFragment = (DayFragment)day;
                 Bundle bundle = new Bundle();
                 bundle.putString("year",years+"");
                 bundle.putString("month",months+"");

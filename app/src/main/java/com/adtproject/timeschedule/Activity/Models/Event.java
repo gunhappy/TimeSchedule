@@ -32,6 +32,13 @@ public class Event {
         return minute;
     }
 
+    public int getStartTime(){
+        return hour*60+minute;
+    }
+
+    public int getEndTime() {
+        return endHour*60+minute;
+    }
     public int getDuration() {
         return duration;
     }
@@ -48,5 +55,10 @@ public class Event {
         if(endHour<10) hrEnd = "0"+endHour;
         if(minute<10) min = "0"+minute;
         return String.format("%s.%s - %s.%s",hr,min,hrEnd,min);
+    }
+
+    public int compareTo(Event e2){
+        if(this.hour > e2.hour)return 1;
+        else return -1;
     }
 }
