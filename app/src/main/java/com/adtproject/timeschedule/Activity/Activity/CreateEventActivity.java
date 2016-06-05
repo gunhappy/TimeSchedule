@@ -72,7 +72,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 int duration_val = Integer.parseInt(duration.charAt(0)+"");
                 Event event = new Event(calendar,hour,minute,duration_val,title);
                 if(Storage.getInstance().canCreateEvent(event)){
-                    Storage.getInstance().addEvent(event);
+                    addNewEvent(event);
                     finish();
                 }
                 else{
@@ -112,6 +112,10 @@ public class CreateEventActivity extends AppCompatActivity {
         setTimeText();
 
         durationSpinner = (Spinner)findViewById(R.id.duration_spinner);
+    }
+
+    public void addNewEvent(Event e){
+        Storage.getInstance().addEvent(e);
     }
 
     public void setDateText(){

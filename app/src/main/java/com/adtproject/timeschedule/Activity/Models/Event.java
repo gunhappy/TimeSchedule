@@ -17,6 +17,7 @@ public class Event {
         this.minute = minute;
         this.duration = duration;
         this.endHour = hour+duration;
+        if(endHour>=24) endHour -= 24;
         this.title = title;
     }
 
