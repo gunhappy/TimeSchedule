@@ -17,7 +17,6 @@ public class Event {
         this.minute = minute;
         this.duration = duration;
         this.endHour = hour+duration;
-        if(endHour>=24) endHour -= 24;
         this.title = title;
     }
 
@@ -40,6 +39,13 @@ public class Event {
     public int getEndTime() {
         return endHour*60+minute;
     }
+
+    public int getEndHour(){
+        int endHr = endHour;
+        if(endHr>=24) endHr -= 24;
+        return endHr;
+    }
+
     public int getDuration() {
         return duration;
     }
@@ -51,9 +57,9 @@ public class Event {
     public String getTimeRangeText(){
         String hr = hour+"";
         String min = minute+"";
-        String hrEnd = endHour+"";
+        String hrEnd = getEndHour()+"";
         if(hour<10) hr = "0"+hour;
-        if(endHour<10) hrEnd = "0"+endHour;
+        if(endHour<10) hrEnd = "0"+getEndHour();
         if(minute<10) min = "0"+minute;
         return String.format("%s.%s - %s.%s",hr,min,hrEnd,min);
     }
